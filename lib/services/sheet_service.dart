@@ -34,9 +34,10 @@ class SheetService {
         }
       }
 
-      if (!userExists) {
-        // اگر کاربر جدید بود، با 0 سکه اضافه‌ش کن
-        await sheet.values.append([userId, '0', DateTime.now().toIso8601String()]);
+      if (!userExists) {   
+        // پیدا کردن شماره سطر بعدی برای اضافه کردن
+final nextRow = rows.length + 1;
+await sheet.values.insertRow(nextRow, [userId, '0', DateTime.now().toIso8601String()]);
       }
     } catch (e) {
       print('Error initUser: $e');

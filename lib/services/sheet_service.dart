@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'package:google_sheets/google_sheets.dart';
-import 'package:googleapis_auth/auth_io.dart';
+import 'package:gsheets/gsheets.dart';
 
 class SheetService {
   // ⚠️ اینجا متن Base64 که از فایل JSON ساختی رو پیست کن
@@ -8,27 +7,25 @@ class SheetService {
 
   // آیدی شیت خودت
   static const String _spreadsheetId = '1cPFwgLgUyS1GvQzlsaYEjm4OuH1C18FEO4N9PABNM70';
-  static const String _sheetName = 'Sheet1'; // اسم تب شیت (معمولا Sheet1)
+  static const String _sheetName = 'Sheet1';
 
   // تابع اتصال به شیت
   static Future<GSheets> _getGSheets() async {
     final jsonString = utf8.decode(base64.decode(_base64Key));
-    final credentials = ServiceAccountCredentials.fromJson(jsonString);
-    final client = await clientViaServiceAccount(credentials, [
-      'https://www.googleapis.com/auth/spreadsheets'
-    ]);
-    return GSheets(client);
+    final credentials = jsonDecode(jsonString);
+    return GSheets(credentials);
   }
 
   // ثبت نام کاربر جدید
   static Future<void> initUser(String userId) async {
     try {
       final gsheets = await _getGSheets();
-      final spreadsheet = await gsheets.spreadsheet(_spreadsheetId);
-      final worksheet = spreadsheet.worksheetByTitle(_sheetName);
-      if (worksheet == null) return;
+      final ss = await gsheets.spreadsheet(_spreadsheetId);
+      final sheet = ss.worksheetByTitle(_sheetName);
+      
+      if (sheet == null) return;
 
-      final rows = await worksheet.values.allRows();
+      final rows = await sheet.values.allRows();
       bool userExists = false;
       for (var row in rows) {
         if (row.isNotEmpty && row[0] == userId) {
@@ -38,7 +35,8 @@ class SheetService {
       }
 
       if (!userExists) {
-        await worksheet.values.append([userId, '0', DateTime.now().toIso8601String()]);
+        // اگر کاربر جدید بود، با 0 سکه اضافه‌ش کن
+        await sheet.values.append([userId, '0', DateTime.now().toIso8601String()]);
       }
     } catch (e) {
       print('Error initUser: $e');
@@ -49,18 +47,16 @@ class SheetService {
   static Future<void> updateCoins(String userId, int coins) async {
     try {
       final gsheets = await _getGSheets();
-      final spreadsheet = await gsheets.spreadsheet(_spreadsheetId);
-      final worksheet = spreadsheet.worksheetByTitle(_sheetName);
-      if (worksheet == null) return;
+      final ss = await gsheets.spreadsheet(_spreadsheetId);
+      final sheet = ss.worksheetByTitle(_sheetName);
+      
+      if (sheet == null) return;
 
-      final rows = await worksheet.values.allRows();
+      final rows = await sheet.values.allRows();
       for (int i = 0; i < rows.length; i++) {
         if (rows[i].isNotEmpty && rows[i][0] == userId) {
-          await worksheet.values.update(
-            [userId, coins.toString(), DateTime.now().toIso8601String()],
-            startRow: i + 1,
-            startColumn: 1
-          );
+          // پیدا کردن سطر کاربر و آپدیتش
+          await sheet.values.insertRow(i + 1, [userId, coins.toString(), DateTime.now().toIso8601String()]);
           break;
         }
       }

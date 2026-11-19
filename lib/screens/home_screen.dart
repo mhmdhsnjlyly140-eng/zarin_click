@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../services/sheet_service.dart';
@@ -13,6 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _coins = 0;
   String _userId = '';
   bool _isLoading = true;
+  Timer? _autoSaveTimer; // تایمر برای ذخیره خودکار
 
   @override
   void initState() {
@@ -25,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
     String? uid = prefs.getString('user_id');
     
     if (uid == null) {
-      // اگر کاربر جدید بود، یک آیدی یکتا بساز
       uid = DateTime.now().millisecondsSinceEpoch.toString();
       await prefs.setString('user_id', uid);
     }
@@ -35,14 +36,39 @@ class _HomeScreenState extends State<HomeScreen> {
       _isLoading = false;
     });
 
-    // اتصال خودکار به گوگل شیت در پس‌زمینه
+    // اتصال اولیه به شیت
     await SheetService.initUser(_userId);
+
+    // شروع تایمر خودکار (هر ۵ ثانیه یکبار ذخیره کن)
+    _autoSaveTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      _saveCoinsToSheet();
+    });
+  }
+
+  Future<void> _saveCoinsToSheet() async {
+    if (_userId.isEmpty) return;
+    // فقط اگر سکه‌ای وجود داره، بفرست
+    if (_coins > 0) {
+      final error = await SheetService.updateCoins(_userId, _coins);
+      if (error != null) {
+        debugPrint('خطای خودکار: $error');
+      } else {
+        debugPrint('✅ ذخیره خودکار انجام شد: $_coins سکه');
+      }
+    }
   }
 
   void _onClick() {
     setState(() {
       _coins++;
     });
+  }
+
+  @override
+  void dispose() {
+    _autoSaveTimer?.cancel(); // وقتی اپ بسته شد، تایمر متوقف شه
+    _saveCoinsToSheet(); // ذخیره نهایی
+    super.dispose();
   }
 
   @override
@@ -94,20 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 40),
-            const Text('با هر کلیک، سکه طلایی بگیر!', style: TextStyle(color: Colors.grey, fontSize: 14)),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                await SheetService.updateCoins(_userId, _coins);
-                if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('سکه‌ها در گوگل شیت ذخیره شد! ✅')),
-                  );
-                }
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.amber),
-              child: const Text('ذخیره در شیت', style: TextStyle(color: Colors.black)),
-            ),
+            const Text('سکه‌ها به صورت خودکار ذخیره می‌شوند! ⏳', style: TextStyle(color: Colors.grey, fontSize: 14)),
           ],
         ),
       ),

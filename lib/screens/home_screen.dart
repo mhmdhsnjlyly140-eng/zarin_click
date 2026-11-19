@@ -14,7 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _coins = 0;
   String _userId = '';
   bool _isLoading = true;
-  Timer? _autoSaveTimer; // تایمر برای ذخیره خودکار
+  Timer? _autoSaveTimer;
 
   @override
   void initState() {
@@ -47,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _saveCoinsToSheet() async {
     if (_userId.isEmpty) return;
-    // فقط اگر سکه‌ای وجود داره، بفرست
     if (_coins > 0) {
       final error = await SheetService.updateCoins(_userId, _coins);
       if (error != null) {
@@ -66,8 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
-    _autoSaveTimer?.cancel(); // وقتی اپ بسته شد، تایمر متوقف شه
-    _saveCoinsToSheet(); // ذخیره نهایی
+    _autoSaveTimer?.cancel();
+    _saveCoinsToSheet();
     super.dispose();
   }
 
@@ -97,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Text('موجودی سکه‌های شما', style: TextStyle(color: Colors.grey[400], fontSize: 18)),
             const SizedBox(height: 10),
             Text('$_coins', style: const TextStyle(fontSize: 56, fontWeight: FontWeight.bold, color: Colors.amber)),
-            const SizedBox(height: 60),
+            const SizedBox(height: 40),
             GestureDetector(
               onTap: _onClick,
               child: Container(
@@ -119,84 +118,36 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
+            const SizedBox(height: 30),
+            const Text('سکه‌ها به صورت خودکار ذخیره می‌شوند! ⏳', style: TextStyle(color: Colors.grey, fontSize: 14)),
             const SizedBox(height: 20),
-ElevatedButton(
-  onPressed: () async {
-    final error = await SheetService.updateCoins(_userId, _coins);
-    if (context.mounted) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('نتیجه تست اتصال'),
-          content: Text(error == null 
-            ? '✅ اتصال برقرار شد و داده‌ها ذخیره شدند!' 
-            : '❌ خطا:\n\n$error'),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('باشه'))
+            ElevatedButton(
+              onPressed: () async {
+                final error = await SheetService.updateCoins(_userId, _coins);
+                if (context.mounted) {
+                  showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('نتیجه تست اتصال'),
+                      content: Text(error == null 
+                        ? '✅ اتصال برقرار شد و داده‌ها ذخیره شدند!' 
+                        : '❌ خطا:\n\n$error'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx), 
+                          child: const Text('باشه')
+                        )
+                      ],
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+              child: const Text('تست اتصال به شیت', style: TextStyle(color: Colors.white)),
+            ),
           ],
         ),
-      );
-    }
-  },
-  const SizedBox(height: 20),
-ElevatedButton(
-  onPressed: () async {
-    final error = await SheetService.updateCoins(_userId, _coins);
-    if (context.mounted) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('نتیجه تست اتصال'),
-          content: Text(error == null 
-            ? '✅ اتصال برقرار شد و داده‌ها ذخیره شدند!' 
-            : '❌ خطا:\n\n$error'),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('باشه'))
-          ],
-        ),
-      );
-    }
-  },
-  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-  child: const Text('تست اتصال به شیت', style: TextStyle(color: Colors.white)),
-),const SizedBox(height: 20),
-ElevatedButton(
-  onPressed: () async {
-    final error = await SheetService.updateCoins(_userId, _coins);
-    if (context.mounted) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('نتیجه تست اتصال'),
-          content: Text(error == null 
-            ? '✅ اتصال برقرار شد و داده‌ها ذخیره شدند!' 
-            : '❌ خطا:\n\n$error'),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('باشه'))
-          ],
-        ),
-      );
-    }
+      ),
+    );
   }
-const SizedBox(height: 20),
-ElevatedButton(
-  onPressed: () async {
-    final error = await SheetService.updateCoins(_userId, _coins);
-    if (context.mounted) {
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('نتیجه تست اتصال'),
-          content: Text(error == null 
-            ? '✅ اتصال برقرار شد و داده‌ها ذخیره شدند!' 
-            : '❌ خطا:\n\n$error'),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('باشه'))
-          ],
-        ),
-      );
-    }
-  },
-  style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-  child: const Text('تست اتصال به شیت', style: TextStyle(color: Colors.white)),
-),
+}

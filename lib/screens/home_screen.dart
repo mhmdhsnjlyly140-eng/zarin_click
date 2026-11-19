@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     String? uid = prefs.getString('user_id');
     
     if (uid == null) {
+      // اگر کاربر جدید بود، یک آیدی یکتا بساز
       uid = DateTime.now().millisecondsSinceEpoch.toString();
       await prefs.setString('user_id', uid);
     }

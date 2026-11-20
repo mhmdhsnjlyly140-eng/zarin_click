@@ -9,8 +9,8 @@ class SupabaseConfig {
 
   static Future<void> initialize() async {
     await Supabase.initialize(
-      url: supabaseUrl,
-      publishableKey: supabasePublishableKey,
+      url: https://uegdjhozzwxpiqbflxli.supabase.co/rest/v1/,
+      publishableKey: sb_publishable_Om8JZWIuK29qfILLNI3c9A_eBmFD5hn,
     );
   }
 

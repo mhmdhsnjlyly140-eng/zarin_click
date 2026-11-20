@@ -1,6 +1,8 @@
-name: zarin_click # یا هر اسمی که الان داری
-description: "اپلیکیشن درآمدزایی زرین کلیک"
+
+name: zarin_click
+description: Zarin Click Android Application
 publish_to: 'none'
+
 version: 1.0.0+1
 
 environment:
@@ -9,14 +11,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
-  gsheets: ^0.4.2
-  shared_preferences: ^2.2.2
+
+  cupertino_icons: ^1.0.8
+  supabase_flutter: ^2.10.3
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true

@@ -1,7 +1,12 @@
-import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
 
-void main() {
+import 'package:flutter/material.dart';
+import 'supabase_config.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SupabaseConfig.initialize();
+
   runApp(const ZarinClickApp());
 }
 
@@ -11,17 +16,19 @@ class ZarinClickApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'زرین کلیک',
       debugShowCheckedModeBanner: false,
+      title: 'زرین کلیک',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFD4AF37), // رنگ طلایی
-          brightness: Brightness.dark,
+          seedColor: Colors.amber,
         ),
         useMaterial3: true,
-        fontFamily: 'Vazir', // اگر فونت فارسی خواستی بعدا اضافه می‌کنیم
       ),
-      home: const HomeScreen(),
+      home: const Scaffold(
+        body: Center(
+          child: Text('زرین کلیک آماده اتصال است'),
+        ),
+      ),
     );
   }
 }

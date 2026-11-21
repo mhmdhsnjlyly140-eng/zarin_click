@@ -1,8 +1,10 @@
 import 'package:libsql_dart/libsql_dart.dart';
 
 class DbService {
-  // ⚠️ به دلایل امنیتی، پیشنهاد می‌کنم توکن رو عوض کنی و توکن جدید رو اینجا بذاری
+  // آدرس دیتابیس Turso شما
   static const String _dbUrl = 'libsql://zarinklick-mhmdhsnjlyly140-eng.aws-us-west-2.turso.io';
+  
+  // توکن دسترسی Turso شما
   static const String _authToken = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTUyNzM0NzIsImlkIjoiMDFhMWZlYTAtMjcwMS03ODczLTljOTEtYWU2MGY0MmM5MDAxIiwia2lkIjoiQ2tSOXl3MDFZNlJMMEd4cmRuWnhsck11YmRwblJfS1VVSi1nY0RJaVI2SSIsInJpZCI6ImYzNWNiYTNmLTVjNTItNGJhYy1iM2ZiLWRkNzAxYTliMWI1ZCJ9.N_kgT2oI8EDcoT1Kl2iQp8jzfuYbj_oNY1XYcYYQN1xchlqox9CVGMvdMBuH2Tm0e1Y8l6wvZkfE1-CAvVEVAg';
 
   static LibsqlClient? _client;
@@ -15,7 +17,7 @@ class DbService {
     return client;
   }
 
-  // ساخت جدول کاربران (اگر وجود نداشته باشه)
+  // ساخت جدول کاربران در صورت عدم وجود
   static Future<void> initTable() async {
     try {
       final client = await _getClient();

@@ -1,8 +1,6 @@
-
 name: zarin_click
-description: Zarin Click Android Application
+description: "اپلیکیشن درآمدزایی زرین کلیک"
 publish_to: 'none'
-
 version: 1.0.0+1
 
 environment:
@@ -11,18 +9,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-  cupertino_icons: ^1.0.8
-  supabase_flutter: ^2.10.3
-
-  # نسخه سازگارتر برای آزمایش
-  app_links: 6.3.3
+  cupertino_icons: ^1.0.6
+  libsql_dart: ^0.9.0
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  flutter_lints: ^4.0.0
+  flutter_lints: ^3.0.0
 
 flutter:
   uses-material-design: true
